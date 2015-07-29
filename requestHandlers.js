@@ -6,7 +6,7 @@ var tables = require("./createDB");
 function start(response, postData, request) {
 	console.log("Request handler 'start' was called.");
 
-	fs.readFile("start.html", "utf8", function(error, file) {
+	fs.readFile("html/start.html", "utf8", function(error, file) {
 		if (error) {
 			response.writeHead(500, {"Content-Type": "text/plain"});
 			response.write(error + "\n");
@@ -19,9 +19,17 @@ function start(response, postData, request) {
 	});
 }
 
+function home(response, postData, request) {
+	console.log("Request handler 'start' was called.");
+
+	response.writeHead(200, {"Content-Type": "text/plain"});
+	response.write("You are welcome.");
+	response.end();
+}
+
 function show(response, postData, request) {
 	console.log("Request handler 'show' was called.");
-	fs.readFile("ListView.html", "utf8", function(error, file) {
+	fs.readFile("html/ListView.html", "utf8", function(error, file) {
 		if (error) {
 			response.writeHead(500, {"Content-Type": "text/plain"});
 			response.write(error + "\n");
@@ -75,7 +83,30 @@ function ajaxlistview(response, postData, request) {
 	}
 }
 
+function ajaxLogin(response, postData, request) {
+	var query = url.parse(request.url, true).query;
+
+	var result = {};
+
+	tables.db.each("SELECT rowid AS id, Active, Answer, Email, Hint, Username, Password, Question, Role FROM Users WHERE Username = \'" + query.un + "\' AND Password = \'" + query.pw + "\'", function(err, row) {
+		result["id"] = row.id;
+	}, function(err, rows) {
+		if (result.id != undefined) {
+			response.writeHead(200, {"Content-Type": "application/json"});
+			response.write(JSON.stringify(result));
+			response.end();
+		}
+		else {
+			response.writeHead(400, {"Content-Type": "text/plain"});
+			response.write("There is no such user.");
+			response.end();
+		}
+	});
+}
+
 exports.start = start;
 exports.show = show;
 exports.clean = clean;
 exports.ajaxlistview = ajaxlistview;
+exports.ajaxLogin = ajaxLogin;
+exports.home = home;

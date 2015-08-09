@@ -10,5 +10,7 @@ handle["/show"] = requestHandlers.show;
 handle["/clean"] = requestHandlers.clean;
 handle["/ajaxListView"] = requestHandlers.ajaxlistview;
 handle["/ajaxLogin"] = requestHandlers.ajaxLogin;
+handle["/ajaxRegister"] = requestHandlers.ajaxRegister;
+handle["/css/start.css"] = requestHandlers.filecss;
 
 server.start(router.route, handle);

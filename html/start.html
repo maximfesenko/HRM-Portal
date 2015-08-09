@@ -8,116 +8,15 @@
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
+		<link rel="stylesheet" href="/css/start.css">
+
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	</head>
 
-	<style>
-		body {
-			padding-top: 90px;
-		}
-		.panel-login {
-			border-color: #ccc;
-			-webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-			-moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-			box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-		}
-		.panel-login>.panel-heading {
-			color: #00415d;
-			background-color: #fff;
-			border-color: #fff;
-			text-align:center;
-		}
-		.panel-login>.panel-heading a{
-			text-decoration: none;
-			color: #666;
-			font-weight: bold;
-			font-size: 15px;
-			-webkit-transition: all 0.1s linear;
-			-moz-transition: all 0.1s linear;
-			transition: all 0.1s linear;
-		}
-		.panel-login>.panel-heading a.active{
-			color: #029f5b;
-			font-size: 18px;
-		}
-		.panel-login>.panel-heading hr{
-			margin-top: 10px;
-			margin-bottom: 0px;
-			clear: both;
-			border: 0;
-			height: 1px;
-			background-image: -webkit-linear-gradient(left,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15),rgba(0, 0, 0, 0));
-			background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-			background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-			background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-		}
-		.panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
-			height: 45px;
-			border: 1px solid #ddd;
-			font-size: 16px;
-			-webkit-transition: all 0.1s linear;
-			-moz-transition: all 0.1s linear;
-			transition: all 0.1s linear;
-		}
-		.panel-login input:hover,
-		.panel-login input:focus {
-			outline:none;
-			-webkit-box-shadow: none;
-			-moz-box-shadow: none;
-			box-shadow: none;
-			border-color: #ccc;
-		}
-		.btn-login {
-			background-color: #59B2E0;
-			outline: none;
-			color: #fff;
-			font-size: 14px;
-			height: auto;
-			font-weight: normal;
-			padding: 14px 0;
-			text-transform: uppercase;
-			border-color: #59B2E6;
-		}
-		.btn-login:hover,
-		.btn-login:focus {
-			color: #fff;
-			background-color: #53A3CD;
-			border-color: #53A3CD;
-		}
-		.forgot-password {
-			text-decoration: underline;
-			color: #888;
-		}
-		.forgot-password:hover,
-		.forgot-password:focus {
-			text-decoration: underline;
-			color: #666;
-		}
-
-		.btn-register {
-			background-color: #1CB94E;
-			outline: none;
-			color: #fff;
-			font-size: 14px;
-			height: auto;
-			font-weight: normal;
-			padding: 14px 0;
-			text-transform: uppercase;
-			border-color: #1CB94A;
-		}
-		.btn-register:hover,
-		.btn-register:focus {
-			color: #fff;
-			background-color: #1CA347;
-			border-color: #1CA347;
-		}
-	</style>
-
 	<script>
 		$(function() {
-
 			$('#login-form-link').click(function(e) {
 				$("#login-form").delay(100).fadeIn(100);
 				$("#register-form").fadeOut(100);
@@ -133,6 +32,56 @@
 				e.preventDefault();
 			});
 
+			$("#login-submit").click(function() {
+				checkError($("#username"));
+				checkError($("#password"));
+
+				var parameters = {username: $("#username").val(), password: $("#password").val()};
+
+				if ($("#username").val() && $("#password").val()) {
+					$.post("/ajaxLogin", parameters, function(data) {
+						window.location.href = "/home";
+					})
+					.fail(function(data) {
+						$("#username").css("border", "2px solid red");
+						$("#login-error-id").addClass("alert alert-warning");
+						$("#login-error-id").text(data.responseText);
+					});
+				}
+			});
+
+			$("#register-submit").click(function() {
+				checkError($("#firstname"));
+				checkError($("#lastname"));
+				checkError($("#reg_username"));
+				checkError($("#email"));
+				checkError($("#reg_password"));
+				checkError($("#confirm-password"));
+				checkError($("#question"));
+				checkError($("#answer"));
+				checkError($("#hint"));
+
+				var isRequiredFilled = (
+					$("#firstname").val() && $("#lastname").val() && $("#reg_username").val() && $("#email").val() &&
+					$("#reg_password").val() && $("#confirm-password").val() && $("#question").val() && $("#answer").val() &&
+					$("#hint").val()
+				);
+				var parameters = {firstname: $("#firstname").val(), lastname: $("#lastname").val(),
+					username: $("#reg_username").val(), email: $("#email").val(), password: $("#reg_password").val(),
+					confirm: $("#confirm-password").val(), question: $("#question").val(), answer: $("#answer").val(),
+					hint: $("#hint").val()};
+
+				if (isRequiredFilled) {
+					$.post("/ajaxRegister", parameters, function(data) {
+
+						window.location.href = "/home";
+					})
+					.fail(function(data) {
+						$("#login-error-id").addClass("alert alert-warning");
+						$("#login-error-id").text(data.responseText);
+					});
+				}
+			});
 		});
 	</script>
 
@@ -182,7 +131,7 @@
 											<div class="row">
 												<div class="col-lg-12">
 													<div class="text-center">
-														<a href="http://phpoll.com/recover" tabindex="5" class="forgot-password">Forgot Password?</a>
+														<a href="#" tabindex="5" class="forgot-password">Forgot Password?</a>
 													</div>
 												</div>
 											</div>
@@ -190,54 +139,54 @@
 									</form>
 									<form id="register-form" role="form" style="display: none;">
 										<div class="form-group">
-											<input type="text" name="firstname" id="firstname" tabindex="1" class="form-control"
+											<input type="text" name="firstname" id="firstname" tabindex="6" class="form-control"
 												placeholder="First Name" value="" data-toggle="tooltip" data-placement="top"
 												title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="text" name="lastname" id="lastname" tabindex="1" class="form-control"
+											<input type="text" name="lastname" id="lastname" tabindex="7" class="form-control"
 												placeholder="Last Name" value="" data-toggle="tooltip" data-placement="top"
 												title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="text" name="username" id="username" tabindex="1" class="form-control"
+											<input type="text" name="reg_username" id="reg_username" tabindex="8" class="form-control"
 												placeholder="Username" value="" data-toggle="tooltip" data-placement="top"
 												title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="email" name="email" id="email" tabindex="1" class="form-control"
+											<input type="email" name="email" id="email" tabindex="9" class="form-control"
 												placeholder="Email Address" value="" data-toggle="tooltip" data-placement="top"
 												title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="password" name="password" id="password" tabindex="2" class="form-control"
+											<input type="password" name="reg_password" id="reg_password" tabindex="10" class="form-control"
 												placeholder="Password" data-toggle="tooltip" data-placement="top"
 												title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="password" name="confirm-password" id="confirm-password" tabindex="2"
+											<input type="password" name="confirm-password" id="confirm-password" tabindex="11"
 												class="form-control" placeholder="Confirm Password" data-toggle="tooltip"
 												data-placement="top" title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="text" name="question" id="question" tabindex="1" class="form-control"
+											<input type="text" name="question" id="question" tabindex="12" class="form-control"
 												placeholder="Question" value="" data-toggle="tooltip"
 												data-placement="top" title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="text" name="answer" id="answer" tabindex="1" class="form-control"
+											<input type="text" name="answer" id="answer" tabindex="13" class="form-control"
 												placeholder="Answer" value="" data-toggle="tooltip"
 												data-placement="top" title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
-											<input type="text" name="hint" id="hint" tabindex="1" class="form-control"
+											<input type="text" name="hint" id="hint" tabindex="14" class="form-control"
 												placeholder="Hint" value="" data-toggle="tooltip"
 												data-placement="top" title="Couldn't be empty.">
 										</div>
 										<div class="form-group">
 											<div class="row">
 												<div class="col-sm-6 col-sm-offset-3">
-													<input type="button" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+													<input type="button" name="register-submit" id="register-submit" tabindex="15" class="form-control btn btn-register" value="Register Now">
 												</div>
 											</div>
 										</div>
@@ -252,40 +201,14 @@
 	</body>
 
 	<script>
-		$("#login-submit").click(function() {
-			var username = $("#username").val();
-			var password = $("#password").val();
-
-			if ( ! username) {
-				$("#username").tooltip("show");
-				$("#username").css("border", "2px solid red");
+		function checkError(tag) {
+			if ( ! $(tag).val()) {
+				$(tag).tooltip("show");
+				$(tag).css("border", "2px solid red");
 			}
 			else {
-				$("#username").css("border", "1px solid #ddd");
+				$(tag).css("border", "1px solid #ddd");
 			}
-
-			if ( ! password) {
-				$("#password").tooltip("show");
-				$("#password").css("border", "2px solid red");
-			}
-			else {
-				$("#password").css("border", "1px solid #ddd");
-			}
-
-			if (username && password) {
-				$.get("/ajaxLogin?un=" + username + "&pw=" + password, function(data) {
-					window.location.href = "/home";
-				})
-				.fail(function(data) {
-					$("#username").css("border", "2px solid red");
-					$("#login-error-id").addClass("alert alert-warning");
-					$("#login-error-id").text(data.responseText);
-				});
-			}
-		});
-
-		$("#register-submit").click(function() {
-
-		});
+		}
 	</script>
 </html>

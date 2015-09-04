@@ -15,6 +15,28 @@ db.run("CREATE TABLE IF NOT EXISTS Users(" +
 	"Password Text, " +
 	"Question Text, " +
 	"Role Text, " +
-	"SessionId Text)");
+	"SessionId Text, " +
+	"EmployeeType Text, " +
+	"Company Text, " +
+	"Industry Text" +
+	")"
+);
+
+db.run("CREATE TABLE IF NOT EXISTS Places(" +
+	"Id Integer primary key autoincrement, " +
+	"Name Text, " +
+	"Url Text" +
+	")"
+);
+
+db.run("CREATE TABLE IF NOT EXISTS UserPlaces(" +
+	"Id Integer primary key autoincrement, " +
+	"UserId Integer, " +
+	"PlaceId Integer, " +
+	//"FOREIGN KEY(PlaceId) REFERENCES Places(Id), " +
+	//"FOREIGN KEY(UserId) REFERENCES Users(Id), " +
+	"ProfileUrl Text" +
+	")"
+);
 
 exports.db = db;

@@ -7,6 +7,7 @@ handle["/"] = requestHandlers.start;
 handle["/login"] = requestHandlers.start;
 handle["/home"] = requestHandlers.home;
 handle["/show"] = requestHandlers.show;
+handle["/addcandidate"] = requestHandlers.addcandidate;
 handle["/clean"] = requestHandlers.clean;
 handle["/ajaxListView"] = requestHandlers.ajaxlistview;
 handle["/ajaxLogin"] = requestHandlers.ajaxLogin;

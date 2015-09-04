@@ -76,6 +76,22 @@ function ajaxlistview(response, postData, request) {
 			response.end();
 		});
 	}
+	else if (query.name == "UserPlaces") {
+		result["fields"] = ["Id", "UserId", "PlaceId", "ProfileUrl"];
+		result["items"] = [];
+		tables.db.each("SELECT rowid AS id, UserId, PlaceId, ProfileUrl FROM UserPlaces", function(err, row) {
+			result.items.push({
+				"id": row.id,
+				"UserId": row.UserId,
+				"PlaceId": row.PlaceId,
+				"ProfileUrl": row.ProfileUrl
+			});
+		}, function(err, rows) {
+			response.writeHead(200, {"Content-Type": "application/json"});
+			response.write(JSON.stringify(result));
+			response.end();
+		});
+	}
 	else {
 		response.writeHead(400, {"Content-Type": "application/json"});
 		response.write(JSON.stringify({"message":"There is no " + query.name + " table."}));
@@ -157,6 +173,44 @@ function displayFile(response, error, file) {
 	}
 }
 
+function addCandidate(response, postData, request) {
+	var data = querystring.parse(postData);
+	console.log('postData=',data);
+
+	var user = [];
+
+	tables.db.run("INSERT INTO Users " +
+		"(Active, Answer, Email, Hint, Username, Password, Question, Role, EmployeeType, Company, Industry)" +
+		" VALUES (0, 'cool', '" + data.email + "', 'cool', '" + data.name + "', " +
+			"'user', 'How are you?', 'Standard User', '" + data.employeeType + "', '" + data.currentCompany + "', " +
+			"'" + data.industry + "')");
+
+	console.log('user inserted.');
+
+	var userId;
+	tables.db.each("SELECT Id FROM Users WHERE Email='" + data.email + "'", function(err, row) {
+		userId = row.Id;
+	}, function(err, rows) {
+		var placeId;
+		tables.db.each("SELECT Id FROM Places WHERE Name='LinkedIn'", function(err, row) {
+			placeId = row.Id;
+		}, function(err, rows) {
+			console.log('userid:',userId,'placeid:',placeId);
+
+			tables.db.run("INSERT INTO UserPlaces(UserId, PlaceId, ProfileUrl)" +
+		    	"VALUES ('" + userId + "', '" + placeId + "', '" + data.profile + "')");
+			//TODO: needs to add catch for the exception
+			user['status'] = 'success';
+			user['code'] = 200;
+			user['message'] = 'Candidate was added sucessfully.';
+
+			response.writeHead(200, {"Content-Type": "application/json"});
+			response.write(JSON.stringify(user), "utf8");
+			response.end();
+		});
+	});
+}
+
 exports.start = start;
 exports.show = show;
 exports.clean = clean;
@@ -165,3 +219,4 @@ exports.ajaxLogin = ajaxLogin;
 exports.ajaxRegister = ajaxRegister;
 exports.home = home;
 exports.filecss = filecss;
+exports.addcandidate = addCandidate;

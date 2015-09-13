@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<script src="jquery.js"></script>
+		<script src="projectdetail.js"></script>
+		<link rel="stylesheet" href="bootstrap.css"></link>
+		<script src="bootstrap.js"></script>
+		<title>Project Detail</title>
+	</head>
+	<body style="width:800px">
+		<div id="detail" class="panel panel-default">
+			<div class="panel-body"></div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a data-toggle="tab" href="#today">Today</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#menu1">Yesterday</a>
+					</li>
+					<li>
+						<a data-toggle="tab" href="#menu2">Week</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div id="today" class="tab-pane fade in active">
+						<div id="todayIssues" class="list-group"></div>
+					</div>
+
+					<div id="menu1" class="tab-pane fade">
+						<div id="yesterdayIssues" class="list-group"></div>
+					</div>
+
+					<div id="menu2" class="tab-pane fade">
+						<div id="tasks" class="list-group"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

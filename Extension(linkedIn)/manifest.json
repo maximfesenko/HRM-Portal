@@ -1,0 +1,18 @@
+{
+	"manifest_version": 2,
+
+	"name": "LinkedIn",
+	"version": "1.0",
+	"description": "Work with linkedIn pages",
+
+	"permissions": [
+		"http://*/*",
+		"https://*/*",
+		"tabs"
+	],
+
+	"browser_action": {
+		"default_title": "LinkedIn",
+		"default_popup": "popup.html"
+	}
+}

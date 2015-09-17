@@ -1,24 +1,26 @@
 <html>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css">
+	<script src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
 
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
 	<link rel="stylesheet" href="/css/start.css">
+	<link rel="stylesheet" href="/css/bootstrap-select.min.css">
+	<script src="/js/bootstrap-select.js"></script>
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-	<style>
-		#listViewTableId {
-			border: 1px solid black;
-			margin: 0% 35%;
-		}
 
+
+	<style>
 		#listViewTableId tr td {
 			text-align: center;
 		}
@@ -43,16 +45,25 @@
 
 		<div class="tab-content">
 			<div class="tab-pane active" id="listViewId">
-				<button class="btn btn-default" onclick="func(); return false;">Show table</button>
+				<div class="dropdown" align="center">
+					<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownButtonId" style="display: block;">
+						Tables
+						<span class="caret"></span>
+					</button>
 
-				<table id="listViewTableId" border="1"></table>
+					<ul class="dropdown-menu" id="dropdownUlId">
+
+					</ul>
+				</div>
+
+				<table class="table table-striped table-bordered" cellspacing="0" width="100%" id="listViewTableId" border="1"></table>
 			</div>
 
 			<div class="tab-pane" id="createTableId">
 
 			</div>
 
-			<div class="tab-pane  urlbox span8" id="clearTableId">
+			<div class="tab-pane" id="clearTableId">
 
 			</div>
 		</div>
@@ -72,17 +83,10 @@
 			return false;
 		});
 
-		function func() {
-			var parts = location.search.substring(1).split('&');
-			var parameters = {};
+		function selectTable(select) {
+			$('#dropdownButtonId').html($(select).text() + '&nbsp;<span class="caret"></span>');
 
-			for (var i = 0; i < parts.length; i++) {
-				var param = parts[i].split('=');
-				parameters[param[0]] = param[1];
-			}
-			console.log("parameters=",parameters);
-
-			$.get("/ajaxListView?name=" + parameters.name, function( data ) {
+			$.get("/ajaxListView?name=" + $(select).text(), function( data ) {
 				console.log(data);
 				var headers = [];
 				for (var i = 0; i < data.fields.length; i++) {
@@ -93,22 +97,60 @@
 				for (var i = 0; i < data.items.length; i++) {
 					rows.push('<tr>');
 					$.each(data.fields, function(index, value) {
-						rows.push('<td>' + data.items[i][value] + '</td>');
+						rows.push(
+							'<td>' +
+							((data.items[i][value] !== undefined && data.items[i][value] !== 'undefined')
+								? data.items[i][value]
+								: ''
+							) +
+							'</td>');
 					});
 					rows.push('</tr>');
 				}
 
+				if (rows.length === 0) {
+					rows.push('<tr><td colspan="' + headers.length + '">' + $(select).text() + ' is empty.</td></tr>');
+				}
 				$("#listViewTableId").html($([
-						'<tr>',
-							headers,
-						'</tr>',
-						rows
-					].join(""))
-				);
+					'<thead>',
+					'<tr>',
+						headers,
+					'</tr>',
+					'</thead>',
+					'<tbody>',
+						rows,
+					'</tbody>'
+				].join("")));
+
+				$('#listViewTableId').DataTable();
 			})
 			.fail(function(data) {
 				console.log(JSON.parse(data.responseText).message);
 			});
 		}
+
+		$(document).ready(function() {
+			var parts = location.search.substring(1).split('&');
+			var parameters = {};
+
+			for (var i = 0; i < parts.length; i++) {
+				var param = parts[i].split('=');
+				parameters[param[0]] = param[1];
+			}
+			console.log("parameters=",parameters);
+
+			$.get("/ajaxListTables", function( data ) {
+				var tables = [];
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].indexOf('sqlite') === -1) {
+						tables.push('<li><a href="#" onclick="selectTable(this); return false;">' + data[i] + '</a></li>');
+					}
+				}
+
+				$("#dropdownUlId").append(tables.join(""));
+
+				selectTable($("#dropdownUlId").find("li:first-child"));
+			});
+		});
 	</script>
 </html>

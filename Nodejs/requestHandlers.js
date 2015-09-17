@@ -58,20 +58,75 @@ function filecss(response, postData, request) {
 	var resultFile;
 	var resultError;
 
-	if (pathname.indexOf("start.css")) {
+	if (pathname.indexOf("start.css") !== -1) {
 		fs.readFile("css/start.css", "utf8", function(error, file) {
-			displayFile(response, error, file);
+			displayFile(response, error, file, 'text/css');
+		});
+	}
+	else if (pathname.indexOf("/js/jquery.tablesorter.js") !== -1) {
+		fs.readFile("js/jquery.tablesorter.js", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/javascript');
+		});
+	}
+	else if (pathname.indexOf("/css/theme.bootstrap.css") !== -1) {
+		fs.readFile("css/theme.bootstrap.css", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/css');
+		});
+	}
+	else if (pathname.indexOf("/css/bootstrap.min.css") !== -1) {
+		fs.readFile("css/bootstrap.min.css", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/css');
+		});
+	}
+	else if (pathname.indexOf("/js/jquery.tablesorter.widgets.js") !== -1) {
+		fs.readFile("js/jquery.tablesorter.widgets.js", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/javascript');
+		});
+	}
+	else if (pathname.indexOf("/css/jquery.tablesorter.pager.css") !== -1) {
+		fs.readFile("css/jquery.tablesorter.pager.css", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/css');
+		});
+	}
+	else if (pathname.indexOf("/js/jquery.tablesorter.pager.js") !== -1) {
+		fs.readFile("js/jquery.tablesorter.pager.js", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/javascript');
+		});
+	}
+	else if (pathname.indexOf("/css/bootstrap-select.min.css") !== -1) {
+		fs.readFile("css/bootstrap-select.min.css", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/css');
+		});
+	}
+	else if (pathname.indexOf("/js/bootstrap-select.js") !== -1) {
+		fs.readFile("js/bootstrap-select.js", "utf8", function(error, file) {
+			displayFile(response, error, file, 'text/javascript');
+		});
+	}
+	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.woff2") !== -1) {
+		fs.readFile("fonts/glyphicons-halflings-regular.woff2", "utf8", function(error, file) {
+			displayFile(response, error, file, 'application/x-font-woff');
+		});
+	}
+	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.woff ") !== -1) {
+		fs.readFile("fonts/glyphicons-halflings-regular.woff ", "utf8", function(error, file) {
+			displayFile(response, error, file, 'application/x-font-woff');
+		});
+	}
+	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.ttf") !== -1) {
+		fs.readFile("/fonts/glyphicons-halflings-regular.ttf", "utf8", function(error, file) {
+			displayFile(response, error, file, 'application/x-font-woff');
 		});
 	}
 }
 
-function displayFile(response, error, file) {
+function displayFile(response, error, file, pathname) {
 	if (error) {
 		response.writeHead(500, {"Content-Type": "text/plain"});
 		response.write(error + "\n");
 		response.end();
 	} else if (file) {
-		response.writeHead(200, {"Content-Type": "text/html"});
+		response.writeHead(200, {"Content-Type": pathname});
 		response.write(file, "utf8");
 		response.end();
 	}

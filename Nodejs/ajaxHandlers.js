@@ -9,6 +9,11 @@ function ajaxlistview(response, postData, request) {
 
 	var result = {};
 
+	tables.db.each("PRAGMA table_info(Users)", function(err, row) {
+		console.log('----columns',row);
+	}, function(err, rows) {
+	});
+
 	if (query.name == "Users") {
 		result["fields"] = ["id", "Active", "Email", "Username", "Password"];
 		result["items"] = [];
@@ -99,6 +104,19 @@ function ajaxRegister(response, postData, request) {
 	response.end();
 }
 
+function ajaxListTables(response, postData, request) {
+	var table = [];
+
+	tables.db.each("SELECT * FROM sqlite_master", function(err, row) {
+		table.push(row.name);
+	}, function(err, rows) {
+		response.writeHead(200, {"Content-Type": "application/json"});
+		response.write(JSON.stringify(table));
+		response.end();
+	});
+}
+
 exports.ajaxlistview = ajaxlistview;
 exports.ajaxLogin = ajaxLogin;
 exports.ajaxRegister = ajaxRegister;
+exports.ajaxListTables = ajaxListTables;

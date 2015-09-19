@@ -10,7 +10,6 @@
 	<!-- Optional theme -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
 
-	<link rel="stylesheet" href="/css/start.css">
 	<link rel="stylesheet" href="/css/bootstrap-select.min.css">
 	<script src="/js/bootstrap-select.js"></script>
 
@@ -18,139 +17,63 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
+	<link rel="stylesheet" href="/css/BootSideMenu.css">
+	<script src="/js/BootSideMenu.js"></script>
 
-
-	<style>
-		#listViewTableId tr td {
-			text-align: center;
-		}
-
-		body {
-			padding-top: 0px !important;
-		}
-	</style>
+	<link rel="stylesheet" href="/css/listView.css">
+	<script src="/js/listView.js"></script>
 
 	<body>
-		<ul class="nav nav-tabs tabs-up" id="friends">
-			<li>
-				<a href="#" data-target="#listViewId" class="media_node active span" id="listViewId_tab" data-toggle="tabajax" rel="tooltip"> List View </a>
-			</li>
-			<li>
-				<a href="#" data-target="#createTableId" class="media_node span" id="createTableId_tab" data-toggle="tabajax" rel="tooltip"> Create Table </a>
-			</li>
-			<li>
-				<a href="#" data-target="#clearTableId" class="media_node span" id="clearTableId_tab" data-toggle="tabajax" rel="tooltip"> Clear Table </a>
-			</li>
-		</ul>
+		<div id="demo">
+			<div class="list-group" id="tablesId">
+			</div>
+		</div>
 
-		<div class="tab-content">
-			<div class="tab-pane active" id="listViewId">
-				<div class="dropdown" align="center">
-					<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownButtonId" style="display: block;">
-						Tables
-						<span class="caret"></span>
-					</button>
+		<div id="content">
+			<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+				<li class="active"><a href="#listViewId" data-toggle="tab">List View</a></li>
+				<li><a href="#createTableId" data-toggle="tab">Create Table</a></li>
+				<li><a href="#clearTableId" data-toggle="tab">Clear Table</a></li>
+			</ul>
 
-					<ul class="dropdown-menu" id="dropdownUlId">
+			<div>
+				<div id="my-tab-content" class="tab-content" style="vertical-align: top;">
+					<div class="tab-pane active" id="listViewId" style="margin: 10px 10px;">
+						<!-- Trigger the modal with a button -->
+						<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						</button>
 
-					</ul>
+						<table class="table table-striped table-bordered" cellspacing="0" width="100%" id="listViewTableId" border="1"></table>
+					</div>
+
+					<div class="tab-pane" id="createTableId">
+
+					</div>
+
+					<div class="tab-pane" id="clearTableId">
+
+					</div>
 				</div>
-
-				<table class="table table-striped table-bordered" cellspacing="0" width="100%" id="listViewTableId" border="1"></table>
 			</div>
+		</div>
 
-			<div class="tab-pane" id="createTableId">
+		<!-- Modal -->
+		<div id="myModal" class="modal fade" role="dialog">
+			<div class="modal-dialog">
 
-			</div>
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="list-group" id="columnsId">
+					</div>
 
-			<div class="tab-pane" id="clearTableId">
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" onclick="changeColumns(); return false;">Save</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div>
+				</div>
 
 			</div>
 		</div>
 	</body>
-
-	<script>
-		$('[data-toggle="tabajax"]').click(function(e) {
-			var $this = $(this),
-			loadurl = $this.attr('href'),
-			targ = $this.attr('data-target');
-
-			$.get(loadurl, function(data) {
-				$(targ).html(data);
-			});
-
-			$this.tab('show');
-			return false;
-		});
-
-		function selectTable(select) {
-			$('#dropdownButtonId').html($(select).text() + '&nbsp;<span class="caret"></span>');
-
-			$.get("/ajaxListView?name=" + $(select).text(), function( data ) {
-				console.log(data);
-				var headers = [];
-				for (var i = 0; i < data.fields.length; i++) {
-					headers.push('<th>' + data.fields[i] + '</th>');
-				}
-
-				var rows = [];
-				for (var i = 0; i < data.items.length; i++) {
-					rows.push('<tr>');
-					$.each(data.fields, function(index, value) {
-						rows.push(
-							'<td>' +
-							((data.items[i][value] !== undefined && data.items[i][value] !== 'undefined')
-								? data.items[i][value]
-								: ''
-							) +
-							'</td>');
-					});
-					rows.push('</tr>');
-				}
-
-				if (rows.length === 0) {
-					rows.push('<tr><td colspan="' + headers.length + '">' + $(select).text() + ' is empty.</td></tr>');
-				}
-				$("#listViewTableId").html($([
-					'<thead>',
-					'<tr>',
-						headers,
-					'</tr>',
-					'</thead>',
-					'<tbody>',
-						rows,
-					'</tbody>'
-				].join("")));
-
-				$('#listViewTableId').DataTable();
-			})
-			.fail(function(data) {
-				console.log(JSON.parse(data.responseText).message);
-			});
-		}
-
-		$(document).ready(function() {
-			var parts = location.search.substring(1).split('&');
-			var parameters = {};
-
-			for (var i = 0; i < parts.length; i++) {
-				var param = parts[i].split('=');
-				parameters[param[0]] = param[1];
-			}
-			console.log("parameters=",parameters);
-
-			$.get("/ajaxListTables", function( data ) {
-				var tables = [];
-				for (var i = 0; i < data.length; i++) {
-					if (data[i].indexOf('sqlite') === -1) {
-						tables.push('<li><a href="#" onclick="selectTable(this); return false;">' + data[i] + '</a></li>');
-					}
-				}
-
-				$("#dropdownUlId").append(tables.join(""));
-
-				selectTable($("#dropdownUlId").find("li:first-child"));
-			});
-		});
-	</script>
 </html>

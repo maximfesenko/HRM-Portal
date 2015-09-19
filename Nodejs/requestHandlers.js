@@ -55,69 +55,36 @@ function clean(response, postData, request) {
 
 function filecss(response, postData, request) {
 	var pathname = url.parse(request.url).pathname;
-	var resultFile;
-	var resultError;
+	var contentType = 'text/plain';
 
-	if (pathname.indexOf("start.css") !== -1) {
-		fs.readFile("css/start.css", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/css');
-		});
+	var extension = pathname.substring(pathname.lastIndexOf('.') + 1);
+
+	switch(extension) {
+		case 'css': {
+			contentType = 'text/css';
+			break;
+		}
+		case 'js': {
+			contentType = 'text/javascript';
+			break;
+		}
+		case 'woff2': {
+			contentType = 'application/font-woff';
+			break;
+		}
+		case 'woff': {
+			contentType = 'application/font-woff';
+			break;
+		}
+		case 'ttf': {
+			contentType = 'application/font-woff';
+			break;
+		}
 	}
-	else if (pathname.indexOf("/js/jquery.tablesorter.js") !== -1) {
-		fs.readFile("js/jquery.tablesorter.js", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/javascript');
-		});
-	}
-	else if (pathname.indexOf("/css/theme.bootstrap.css") !== -1) {
-		fs.readFile("css/theme.bootstrap.css", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/css');
-		});
-	}
-	else if (pathname.indexOf("/css/bootstrap.min.css") !== -1) {
-		fs.readFile("css/bootstrap.min.css", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/css');
-		});
-	}
-	else if (pathname.indexOf("/js/jquery.tablesorter.widgets.js") !== -1) {
-		fs.readFile("js/jquery.tablesorter.widgets.js", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/javascript');
-		});
-	}
-	else if (pathname.indexOf("/css/jquery.tablesorter.pager.css") !== -1) {
-		fs.readFile("css/jquery.tablesorter.pager.css", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/css');
-		});
-	}
-	else if (pathname.indexOf("/js/jquery.tablesorter.pager.js") !== -1) {
-		fs.readFile("js/jquery.tablesorter.pager.js", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/javascript');
-		});
-	}
-	else if (pathname.indexOf("/css/bootstrap-select.min.css") !== -1) {
-		fs.readFile("css/bootstrap-select.min.css", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/css');
-		});
-	}
-	else if (pathname.indexOf("/js/bootstrap-select.js") !== -1) {
-		fs.readFile("js/bootstrap-select.js", "utf8", function(error, file) {
-			displayFile(response, error, file, 'text/javascript');
-		});
-	}
-	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.woff2") !== -1) {
-		fs.readFile("fonts/glyphicons-halflings-regular.woff2", "utf8", function(error, file) {
-			displayFile(response, error, file, 'application/x-font-woff');
-		});
-	}
-	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.woff ") !== -1) {
-		fs.readFile("fonts/glyphicons-halflings-regular.woff ", "utf8", function(error, file) {
-			displayFile(response, error, file, 'application/x-font-woff');
-		});
-	}
-	else if (pathname.indexOf("/fonts/glyphicons-halflings-regular.ttf") !== -1) {
-		fs.readFile("/fonts/glyphicons-halflings-regular.ttf", "utf8", function(error, file) {
-			displayFile(response, error, file, 'application/x-font-woff');
-		});
-	}
+
+	fs.readFile(pathname.substring(1), "utf8", function(error, file) {
+		displayFile(response, error, file, contentType);
+	});
 }
 
 function displayFile(response, error, file, pathname) {

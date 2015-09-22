@@ -83,6 +83,73 @@ function selectTable(select) {
 	});
 }
 
+function addField() {
+	var inputs = $("#modalTable .row").last().find("input");
+
+	if ($(inputs).eq(0).val() !== "" && $(inputs).eq(1).val() !== "") {
+		$("#modalTable .row").last().after($([
+			'<div class="row">',
+				'<div class="col-md-6">',
+					'<input type="text" class="form-control" placeholder="Field" />',
+				'</div>',
+				'<div class="col-md-6">',
+					'<input type="text" class="form-control" placeholder="Type" />',
+				'</div>',
+			'</div>'
+		].join("")));
+	}
+}
+
+function createTable() {
+	var rows = $("#modalTable .row");
+	var firstInput = $(rows).eq(0).find("input");
+
+	if ($(firstInput).val() === "") {
+		$(firstInput).addClass("red-border");
+		$(firstInput).removeClass("normal-border");
+
+		return false;
+	}
+	else {
+		$(firstInput).addClass("normal-border");
+		$(firstInput).removeClass("red-border");
+	}
+
+	for (var i = 1; i < rows.length; i++) {
+		var firstInput = $(rows[i]).find("input")[0];
+		var secondInput = $(rows[i]).find("input")[1];
+
+		if ($(firstInput).val() === "" && $(firstInput).val() !== "Id") {
+			$(firstInput).addClass("red-border");
+			$(firstInput).removeClass("normal-border");
+		}
+		else {
+			$(firstInput).addClass("normal-border");
+			$(firstInput).removeClass("red-border");
+		}
+
+		if ($(secondInput).val() === "" ||
+			($(secondInput).val() !== "Integer" &&
+			$(secondInput).val() !== "Text")) {
+
+			$(secondInput).addClass("red-border");
+			$(secondInput).removeClass("normal-border");
+
+			return false;
+		}
+		else {
+			$(secondInput).addClass("normal-border");
+			$(secondInput).removeClass("red-border");
+		}
+	}
+
+	$("#modalTable").removeClass("in");
+	$("#modalTable").css("display", "block");
+	$("div.modal-backdrop").removeClass("in");
+
+	return true;
+}
+
 $(document).ready(function() {
 	$('#demo').BootSideMenu({
 		side:"left", // left or right
@@ -109,10 +176,47 @@ $(document).ready(function() {
 		}
 
 		$("#tablesId").append(tables.join(""));
-		$("#tablesId").append('<a href="#" class="list-group-item" style="text-align: center;font-size: 22px;padding: 0px 0px;" onclick="alert(\'add table\'); return false;">+</a>');
+		$("#tablesId").append($([
+			'<a href="#" class="list-group-item" style="text-align: center;font-size: 22px;padding: 0px 0px;position:fixed;bottom:2px;">',
+				'<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#modalTable">',
+					'+',
+				'</button>',
+			'</a>'
+		].join("")));
+
+		$("#tablesId a:last-child").css("width", $("#tablesId").css("width"));
+		$("#tablesId a:last-child button").css("width", $("#tablesId").css("width"));
 
 		var firstItem = $("#tablesId").find("a:first-child");
 		$(firstItem).addClass('active');
+
+		$("button[data-target='#modalTable']").click(function() {
+			$("#modalTable .modal-content").html($([
+				'<div class="row" >',
+					'<div class="col-md-6 col-md-offset-3" align="center">',
+						'<input type="text" class="form-control" placeholder="Table Name" />',
+					'</div>',
+				'</div>',
+				'<div class="row">',
+					'<div class="col-md-6">',
+						'<input type="text" class="form-control" placeholder="Field" />',
+					'</div>',
+
+					'<div class="col-md-6">',
+						'<input type="text" class="form-control" placeholder="Type" />',
+					'</div>',
+				'</div>',
+
+				'<div align="center">',
+					'<button type="button" class="btn btn-default" onclick="addField(); return false;">Add</button>',
+				'</div>',
+
+				'<div class="modal-footer">',
+					'<button type="button" class="btn btn-default" onclick="createTable(); return false;">Save</button>',
+					'<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>',
+				'</div>'
+			].join("")));
+		});
 
 		selectTable(firstItem);
 	});

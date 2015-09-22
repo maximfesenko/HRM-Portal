@@ -5,3 +5,15 @@
 body {
 	padding-top: 0px !important;
 }
+
+.modal-content .row {
+	padding: 2px 5px;
+}
+
+.red-border {
+	border: 2px solid red;
+}
+
+.normal-border {
+	border: 1px solid #ccc;
+}
